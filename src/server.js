@@ -1,17 +1,26 @@
 const express = require("express");
 const cors = require("cors");
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs');
+const psql = require('./modules/postgres')()
 
 const app = express();
 
-app.use(cors());
+app.use(async(req, res, next)=> {
+  req.psql = await psql
+  next()
+})
 
-app.listen(8000, () => console.log("Server ready"));
+app.use(express.json())
+app.use(express.urlencoded({extended: true}))
+app.use(cors());
 
 fs.readdir(path.join(__dirname, "routes"), (err, files) => {
   files.forEach(file => {
-    const router = require(path.join(__dirname, "routes", file))
-    if(router.path && router.route) app.use(router.path, router.route)
+    const route = require(path.join(__dirname, "routes", file))
+    if(route.path && route.router) app.use(route.path, route.router)
   })
 })
+
+app.listen(4000, () => console.log("Server ready"));
+
