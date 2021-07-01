@@ -22,5 +22,5 @@ fs.readdir(path.join(__dirname, "routes"), (err, files) => {
   })
 })
 
-app.listen(4000, () => console.log("Server ready"));
+app.listen(3300, () => console.log("Server ready"));
 
